@@ -1,0 +1,14 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Env files
+.env
+
+# Virtual environments
+.venv
+.github/instructions/wmt-copilot.instructions.md
