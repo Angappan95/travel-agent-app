@@ -1,6 +1,7 @@
 import warnings
 import logging
 import sys
+from logging_utils import log_business_event
 from config import LOG_LEVEL, LOG_FORMAT, LOG_FILE
 
 warnings.filterwarnings("ignore", category=UserWarning, module="google.adk")
@@ -29,9 +30,6 @@ def main():
     try:
         print("Welcome to Travel Agent!!")
         logger.info("Application started successfully")
-        
-        # Example of using the logging system for business events
-        from logging_utils import log_business_event
         log_business_event("application_started", {"version": "1.0", "mode": "demo"})
         
         # Add any additional main application logic here
