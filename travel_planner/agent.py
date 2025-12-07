@@ -75,7 +75,7 @@ def create_comprehensive_travel_plan(
         if outbound_flights.get('status') == 'success' and outbound_flights.get('flights'):
             logger.info(f"✈️ OUTBOUND FLIGHTS FOUND: {len(outbound_flights['flights'])} options available")
             for i, flight in enumerate(outbound_flights['flights'][:3], 1):  # Log top 3 options
-                logger.info(f"   Option {i}: {flight['airline']} {flight['flight_number']} - {flight['departure']} to {flight['arrival']} - {flight['price']} ({flight['duration']})")
+                logger.info(f"   Option {i}: {flight['airline']} {flight['flight_number']} - {flight['departure']} to {flight['arrival']} - {flight['price']}")
         else:
             logger.warning(f"❌ No outbound flights found for {source} -> {destination} on {travel_date}")
         
@@ -87,7 +87,7 @@ def create_comprehensive_travel_plan(
         if return_flights.get('status') == 'success' and return_flights.get('flights'):
             logger.info(f"✈️ RETURN FLIGHTS FOUND: {len(return_flights['flights'])} options available")
             for i, flight in enumerate(return_flights['flights'][:3], 1):  # Log top 3 options
-                logger.info(f"   Option {i}: {flight['airline']} {flight['flight_number']} - {flight['departure']} to {flight['arrival']} - {flight['price']} ({flight['duration']})")
+                logger.info(f"   Option {i}: {flight['airline']} {flight['flight_number']} - {flight['departure']} to {flight['arrival']} - {flight['price']}")
         else:
             logger.warning(f"❌ No return flights found for {destination} -> {source} on {return_date}")
 
@@ -127,6 +127,8 @@ def create_comprehensive_travel_plan(
 
         # Search for activities
         activity_filters = {}
+        preferred_category = None
+        
         if budget:
             # Allocate 20% of budget for activities
             max_activity_budget = int(budget * 0.2 / max(1, duration_days))
@@ -134,15 +136,25 @@ def create_comprehensive_travel_plan(
         
         if preferences:
             if "adventure" in preferences.lower():
-                activity_filters["category"] = "Adventure"
+                preferred_category = "Adventure"
             elif "cultural" in preferences.lower() or "heritage" in preferences.lower():
-                activity_filters["category"] = "Heritage"
+                preferred_category = "Heritage"
             elif "food" in preferences.lower() or "culinary" in preferences.lower():
-                activity_filters["category"] = "Culinary"
+                preferred_category = "Culinary"
         
-        logger.info(f"Searching for activities in {destination} with filters: {activity_filters}")
+        logger.info(f"Searching for activities in {destination} with filters: {activity_filters}, preferred_category: {preferred_category}")
         activities = search_activities(destination, **activity_filters)
         logger.info(f"Activities search status: {activities.get('status', 'unknown')}")
+        
+        # Filter by preferred category if specified
+        if preferred_category and activities.get('status') == 'success' and activities.get('activities'):
+            original_count = len(activities['activities'])
+            activities['activities'] = [
+                act for act in activities['activities'] 
+                if act.get('category', '').lower() == preferred_category.lower()
+            ]
+            logger.info(f"Filtered activities by category '{preferred_category}': {original_count} -> {len(activities['activities'])} activities")
+            activities['activities_found'] = len(activities['activities'])
         
         # Log activity selection details
         if activities.get('status') == 'success' and activities.get('activities'):
@@ -439,6 +451,31 @@ travel_planner_agent = Agent(
         "4. Compare multiple destinations to help users decide\n"
         "5. Suggest activities based on interests (adventure, cultural, culinary, etc.)\n"
         "6. Give travel recommendations and tips\n\n"
+
+        "CRITICAL INSTRUCTION - RESPONSE FORMAT:\n"
+        "After calling create_comprehensive_travel_plan or any other tool, you MUST generate a complete text response\n"
+        "summarizing the results for the user. Structure your response as follows:\n\n"
+        "1. TRIP OVERVIEW: Summarize the trip details (destination, dates, travelers, budget)\n"
+        "2. FLIGHT OPTIONS: List the best 2-3 flight options for both outbound and return with:\n"
+        "   - Airline and flight number\n"
+        "   - Departure and arrival times\n"
+        "   - Price per person\n"
+        "3. ACCOMMODATION: Present the top hotel options with:\n"
+        "   - Hotel name and rating\n"
+        "   - Price per night and total cost\n"
+        "   - Key amenities\n"
+        "4. ACTIVITIES: Suggest 3-5 activities with:\n"
+        "   - Activity name and category\n"
+        "   - Price and duration\n"
+        "   - Brief description\n"
+        "5. COST BREAKDOWN: Show the detailed cost estimate:\n"
+        "   - Flights total\n"
+        "   - Accommodation total\n"
+        "   - Activities estimate\n"
+        "   - Grand total and per-person cost\n"
+        "   - Budget status (within/over budget)\n"
+        "6. RECOMMENDATIONS: Provide 3-5 helpful travel tips specific to this trip\n\n"
+        "DO NOT just return the raw function output. Always format it into a conversational, helpful response.\n\n"
         "Always consider user preferences, budget constraints, and trip duration when making recommendations. "
         "Provide detailed explanations for your suggestions and offer alternative options when possible. "
         "Be helpful, informative, and ensure all recommendations are practical and well-reasoned."

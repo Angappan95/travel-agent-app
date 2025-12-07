@@ -76,22 +76,7 @@ python main.py
 
 ### Comprehensive Travel Planning
 ```
-"Plan a 5-day family trip from Delhi to Goa for 4 people. Travel dates: Jan 15-20, 2026. Budget is ₹80,000. We prefer mid-range hotels and adventure activities."
-```
-
-### Destination Comparison
-```
-"Compare Goa, Manali, and Kerala for a 4-day adventure trip. Budget is ₹40,000 per person."
-```
-
-### Budget Planning
-```
-"I'm a student with ₹15,000 budget for a 3-day trip from Mumbai. Suggest budget-friendly destinations with cultural experiences."
-```
-
-### Activity-Based Inspiration
-```
-"Show me destinations across India for heritage and cultural experiences."
+"Plan a 3-day family trip from Delhi to Goa for 2 people. Travel dates: Jan 15-20, 2026. Budget is ₹40,000. We prefer mid-range hotels and adventure activities."
 ```
 
 ## Available Destinations
