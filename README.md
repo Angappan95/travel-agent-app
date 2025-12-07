@@ -148,6 +148,56 @@ Travel Planner Agent (Super Agent)
 
 This project uses Google ADK (Agent Development Kit) for building AI agents. Each agent specializes in a specific domain while the super agent coordinates them for comprehensive travel planning.
 
+## Logging and Flow Tracking
+
+The application includes comprehensive logging to track the flow of operations across all agents:
+
+### Log Configuration
+- **Log File**: `travel_agent.log` (created automatically)
+- **Log Level**: INFO (configurable via `config.py`)
+- **Log Format**: Timestamp, logger name, level, file:line, and message
+
+### Logging Features
+
+#### 1. **Flow Tracking**
+- Function entry/exit with execution times
+- Agent interactions and handoffs
+- Search operations with metrics
+- Business events for analytics
+
+#### 2. **Error Handling**
+- Comprehensive exception logging with stack traces
+- Graceful error recovery
+- Error context preservation
+
+#### 3. **Performance Monitoring**
+- Function execution times
+- Search result counts
+- Resource usage patterns
+
+#### 4. **Business Analytics**
+- Travel plan requests and completions
+- Search patterns and preferences
+- Cost analysis tracking
+
+### Log Examples
+
+```
+2024-12-07 10:30:15 - travel_agent.travel_planner - INFO - [agent.py:45] - Starting comprehensive travel plan creation: Bangalore -> Udaipur, 2 travelers, budget: 50000
+2024-12-07 10:30:15 - travel_agent.flight_agent - INFO - [agent.py:25] - Searching flights: Bangalore -> Udaipur on 2024-12-10
+2024-12-07 10:30:16 - travel_agent.hotel_agent - INFO - [agent.py:35] - Searching hotels in Udaipur, filters: max_price=8000, min_rating=4
+2024-12-07 10:30:17 - travel_agent.activities_agent - INFO - [agent.py:28] - Searching activities in Udaipur, filters: category=Heritage
+2024-12-07 10:30:18 - travel_agent.business_events - INFO - [logging_utils.py:85] - BUSINESS_EVENT: travel_plan_completed | DATA: destination=Udaipur, total_cost=₹48,500, duration=4
+```
+
+### Logging Utilities
+
+The `logging_utils.py` module provides:
+- **Function decorators** for automatic timing and error logging
+- **Context managers** for grouped operations
+- **Business event logging** for analytics
+- **Search metrics tracking** for performance optimization
+
 ## Environment Setup
 
 1. Create a `.env` file with your API keys if needed

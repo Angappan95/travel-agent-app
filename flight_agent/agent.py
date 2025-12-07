@@ -1,9 +1,13 @@
 import datetime
 from typing import Optional
+import logging
 
 from google.adk.agents import Agent
 from .mock_data import FLIGHTS_DB, get_all_cities
 from config import MODEL_NAME
+
+# Setup logger for flight agent
+logger = logging.getLogger('travel_agent.flight_agent')
 
 def search_flights(source: str, destination: str, date: Optional[str] = None) -> dict:
     """Searches for available flights between two cities.
@@ -16,25 +20,38 @@ def search_flights(source: str, destination: str, date: Optional[str] = None) ->
     Returns:
         dict: status and list of available flights or error message.
     """
-
-    key = (source.lower(), destination.lower())
+    logger.info(f"Searching flights: {source} -> {destination} on {date or 'today'}")
     
-    if key not in FLIGHTS_DB:
-
+    try:
+        key = (source.lower(), destination.lower())
+        
+        if key not in FLIGHTS_DB:
+            logger.warning(f"No flights available for route: {source} -> {destination}")
+            return {
+                "status": "error",
+                "error_message": f"No flights available from {source} to {destination}."
+            }
+        
+        flights = FLIGHTS_DB[key]
+        travel_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        logger.info(f"Found {len(flights)} flights for route {source} -> {destination}")
+        
+        result = {
+            "status": "success",
+            "flights": flights,
+            "route": f"{source} to {destination}",
+            "date": travel_date
+        }
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error searching flights {source} -> {destination}: {str(e)}", exc_info=True)
         return {
             "status": "error",
-            "error_message": f"No flights available from {source} to {destination}."
+            "error_message": f"Error searching flights: {str(e)}"
         }
-    
-    flights = FLIGHTS_DB[key]
-    travel_date = date if date else datetime.datetime.now().strftime("%Y-%m-%d")
-    
-    return {
-        "status": "success",
-        "flights": flights,
-        "route": f"{source} to {destination}",
-        "date": travel_date
-    }
 
 flight_agent = Agent(
     name="flight_booking_agent",
