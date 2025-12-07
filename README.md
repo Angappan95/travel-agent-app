@@ -29,9 +29,19 @@ The main autonomous agent that coordinates all sub-agents to provide:
 
 ## Quick Start
 
+### Prerequisite:
+```bash
+# Install uv first. Run this command in your terminal:
+pip install uv
+```
+
 ### 1. Install Dependencies
 ```bash
-pip install google-adk>=1.20.0 litellm>=1.80.5
+# Create virtual environment
+uv venv
+
+# Install dependencies from pyproject.toml
+uv pip install -r pyproject.toml
 ```
 
 ### 2. Run the Web Interface
@@ -40,7 +50,7 @@ pip install google-adk>=1.20.0 litellm>=1.80.5
 source .venv/bin/activate
 
 # Start the travel planner web interface
-adk web travel_planner
+adk web
 ```
 
 Access the agent at: http://127.0.0.1:8000
